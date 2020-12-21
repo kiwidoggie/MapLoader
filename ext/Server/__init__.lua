@@ -1,4 +1,4 @@
---local presetJSON = require "preset"
+local presetJSON = require "preset"
 local function DecodeParams(p_Table)
     if(p_Table == nil) then
         print("No table received")
@@ -23,8 +23,15 @@ local function DecodeParams(p_Table)
 	return p_Table
 end
 
+local preset = DecodeParams(json.decode(presetJSON))
+--DecodeParams(json.decode(s_ProjectSaveData[1].save_file_json)), vanillaOnly = true})
 
-local preset = nil
+Events:Subscribe("Level:Loaded", function(p_LevelName, p_GameMode, p_Round, p_RoundsPerMap)
+	Events:Dispatch('MapLoader:LoadLevel', {header = preset.header, data = DecodeParams(json.decode(presetJSON)), vanillaOnly = true})
+end)
+
+
+
 Events:Subscribe('Extension:Loaded', function()
 	if(preset ~= nil) then
 		print("Loaded preset: " .. preset.header.projectName)

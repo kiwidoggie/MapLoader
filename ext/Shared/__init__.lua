@@ -27,15 +27,20 @@ local function PatchOriginalObject(object, world)
 		s_Reference.excluded = true
 	end
 	if(object.localTransform) then
-		s_Reference.blueprintTransform = LinearTransform(object.localTransform)
+		s_Reference.blueprintTransform = object.localTransform -- LinearTransform(object.localTransform)
 	else
-		s_Reference.blueprintTransform = LinearTransform(object.transform)
+		s_Reference.blueprintTransform = object.transform -- LinearTransform(object.transform)
 	end
 end
 local function AddCustomObject(object, world)
+	--[[for k,v in pairs(object) do
+		print("k: " .. k)
+		print("v: " .. v)
+	end]]--
 	local s_Reference = ReferenceObjectData()
 	customRegistry.referenceObjectRegistry:add(s_Reference)
-	s_Reference.blueprintTransform = LinearTransform(object.localTransform)
+	s_Reference.blueprintTransform = object.transform -- LinearTransform(object.localTransform)
+	--print("AddCustomObject: " .. object.transform)
 	s_Reference.blueprint = Blueprint(ResourceManager:FindInstanceByGuid(Guid(object.blueprintCtrRef.partitionGuid), Guid(object.blueprintCtrRef.instanceGuid)))
 	s_Reference.blueprint:MakeWritable()
 	s_Reference.blueprint.needNetworkId = true
@@ -142,6 +147,6 @@ Events:Subscribe('Level:LoadResources', function()
 	customRegistry = RegistryContainer()
 end)
 Events:Subscribe('Level:RegisterEntityResources', function(levelData)
-	print("Resources")
+	--print("Resources customRegistry: " .. customRegistry)
 	ResourceManager:AddRegistry(customRegistry, ResourceCompartment.ResourceCompartment_Game)
 end)
