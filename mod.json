@@ -3,7 +3,7 @@
 	"Authors": ["Powback"],
 	"Description": "Load custom levels created using MapEditor",
 	"URL": "",
-	"Version": "0",
+	"Version": "1.0.0",
 	"HasWebUI": false,
 	"HasVeniceEXT": true
 }

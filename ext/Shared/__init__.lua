@@ -2,6 +2,7 @@
 -- the server via NetEvents on the client-side, or overriden
 -- with the real data on the server-side.
 PrimaryLevel = nil
+
 local function PatchOriginalObject(object, world)
 	if(object.original == nil) then
 		print("Object without original reference found, dynamic object?")
@@ -32,10 +33,11 @@ local function PatchOriginalObject(object, world)
 		s_Reference.blueprintTransform = LinearTransform(object.transform)
 	end
 end
+
 local function AddCustomObject(object, world)
 	local s_Reference = ReferenceObjectData()
 	customRegistry.referenceObjectRegistry:add(s_Reference)
-	s_Reference.blueprintTransform = LinearTransform(object.localTransform)
+	s_Reference.blueprintTransform = object.transform --LinearTransform(object.localTransform)
 	s_Reference.blueprint = Blueprint(ResourceManager:FindInstanceByGuid(Guid(object.blueprintCtrRef.partitionGuid), Guid(object.blueprintCtrRef.instanceGuid)))
 	s_Reference.blueprint:MakeWritable()
 	s_Reference.blueprint.needNetworkId = true
@@ -120,6 +122,7 @@ Events:Subscribe('Level:LoadingInfo', function(p_Info)
 			print("No custom level specified.")
 			return
 		end
+
 		print("Patching level")
 		local s_WorldPartReference = CreateWorldPart()
 		s_WorldPartReference.indexInBlueprint = #PrimaryLevel.objects + 6000
@@ -130,6 +133,7 @@ Events:Subscribe('Level:LoadingInfo', function(p_Info)
 	end
 end)
 Events:Subscribe('Level:Destroy', function()
+	print("LEVEL DESTROYED")
 	objectVariations = {}
 	pendingVariations = {}
 	customRegistry = nil
@@ -142,6 +146,7 @@ Events:Subscribe('Level:LoadResources', function()
 	customRegistry = RegistryContainer()
 end)
 Events:Subscribe('Level:RegisterEntityResources', function(levelData)
+
 	print("Resources")
 	ResourceManager:AddRegistry(customRegistry, ResourceCompartment.ResourceCompartment_Game)
 end)
